@@ -11,7 +11,7 @@ const ejsMate = require("ejs-mate");
 const catchAsync = require("./utils/catchAsync");
 // const joi = require("joi");
 const ExpressError = require("./utils/expressError");
-const Joi = require("joi");
+// const Joi = require("joi");
 const { campgroundSchema } = require("./schemas");
 mongoose
   .connect("mongodb://127.0.0.1:27017/yelp-camp", {
@@ -120,10 +120,18 @@ app.delete(
     res.redirect("/campgrounds");
   })
 );
+// error temp based
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page not found", 404));
+});
 
-// app.use((err, req, res, next) => {
-//   res.send("hoo boy something went wrong");
-// });
+app.use((err, req, res, next) => {
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = "something went wrong";
+  res.status(statusCode).render("campgrounds/error.ejs", { err });
+});
+
+//
 
 app.listen("3000", () => {
   console.log("Server started localhost 3000");
