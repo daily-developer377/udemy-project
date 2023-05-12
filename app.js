@@ -12,7 +12,10 @@ const catchAsync = require("./utils/catchAsync");
 // const joi = require("joi");
 const ExpressError = require("./utils/expressError");
 // const Joi = require("joi");
-const { campgroundSchema } = require("./schemas");
+// review model
+const Review = require("./models/review");
+// end review model
+const { campgroundSchema, reviewSchema } = require("./schemas");
 mongoose
   .connect("mongodb://127.0.0.1:27017/yelp-camp", {
     // useNewParser: true,
@@ -48,6 +51,16 @@ app.get("/", (req, res) => {
 
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+
+const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
@@ -120,6 +133,20 @@ app.delete(
     res.redirect("/campgrounds");
   })
 );
+
+app.post(
+  "/campgrounds/:id/reviews",
+  validateReview,
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review); //pushing new review into campground model in that campground model we set it in reviews
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
+
 // error temp based
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page not found", 404));
