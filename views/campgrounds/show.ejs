@@ -48,15 +48,14 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">
-                           Review : <%= review.body %>
+                           Review : <%= review.rating %>
                         </h5>
                         <p class="card-text">
-                            Rating : <%= review.rating %>
+                            Rating : <%= review.body %>
                         </p>
-                        <!-- <p>Review : <%= review.body %>
-                        </p>
-                        <p>Rating : <%= review.rating %>
-                        </p> -->
+                       <form action="/campgrounds/<%=campground._id%>/reviews/<%= review._id %>?_method=Delete" method="post">
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </form>
                     </div>
                 </div>
                 <% } %>
