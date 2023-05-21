@@ -7,10 +7,7 @@ const campground = require("./models/campground");
 const { Console } = require("console");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-// const catchAsync = require("./utils/catchAsync");
-// const joi = require("joi");
 const ExpressError = require("./utils/expressError");
-// const Joi = require("joi");
 
 const { campgroundSchema, reviewSchema } = require("./schemas");
 mongoose
@@ -38,6 +35,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
   res.render("home");
