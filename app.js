@@ -8,6 +8,7 @@ const { Console } = require("console");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/expressError");
+const session = require("express-session");
 
 const { campgroundSchema, reviewSchema } = require("./schemas");
 mongoose
@@ -36,6 +37,18 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
 app.use(express.static(path.join(__dirname, "public")));
+
+const sessionConfig = {
+  secret: "key",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 1000 * 60 * 60 * 7,
+    maxAge: 1000 * 60 * 60 * 7,
+  },
+};
+
+app.use(session(sessionConfig));
 
 app.get("/", (req, res) => {
   res.render("home");
