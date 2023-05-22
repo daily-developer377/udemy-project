@@ -35,8 +35,6 @@ app.use(methodOverride("_method")); //use for method override so we can use _met
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-
-
 app.use(express.static(path.join(__dirname, "public")));
 
 const sessionConfig = {
@@ -54,13 +52,12 @@ app.use(flash());
 // setting flash to all routes we want to set it before the routes
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
-  console.log("used")
+  res.locals.error = req.flash("error");
   next();
 });
 
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
-
 
 app.get("/", (req, res) => {
   res.render("home");
