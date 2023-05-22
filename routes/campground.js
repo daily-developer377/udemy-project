@@ -21,7 +21,7 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
-    res.render("campgrounds/index", { campgrounds });
+    res.render("campgrounds/index", { campgrounds});
   })
 );
 
@@ -38,6 +38,7 @@ router.post(
     // console.log(req.body);
     await campground.save();
     console.log(campground);
+    req.flash("success", "Successfully Made New Campground");
     res.redirect(`/campgrounds/${campground._id}`);
   })
 );

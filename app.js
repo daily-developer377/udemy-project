@@ -9,6 +9,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/expressError");
 const session = require("express-session");
+const flash = require("connect-flash");
 
 const { campgroundSchema, reviewSchema } = require("./schemas");
 mongoose
@@ -34,8 +35,8 @@ app.use(methodOverride("_method")); //use for method override so we can use _met
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.use("/campgrounds", campgrounds);
-app.use("/campgrounds/:id/reviews", reviews);
+
+
 app.use(express.static(path.join(__dirname, "public")));
 
 const sessionConfig = {
@@ -49,6 +50,17 @@ const sessionConfig = {
 };
 
 app.use(session(sessionConfig));
+app.use(flash());
+// setting flash to all routes we want to set it before the routes
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  console.log("used")
+  next();
+});
+
+app.use("/campgrounds", campgrounds);
+app.use("/campgrounds/:id/reviews", reviews);
+
 
 app.get("/", (req, res) => {
   res.render("home");
